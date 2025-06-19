@@ -1,6 +1,10 @@
 package cbrapi
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+	"strconv"
+	"strings"
+)
 
 // ValCurs structure for CBR XML parsing
 type ValCurs struct {
@@ -16,4 +20,12 @@ type Currency struct {
 
 // TODO : GetRates(dateReq string) (map[string]float64, error)
 
-// TODO : parseRussianFloat()
+func parseRussianFloat(num string) (float64, error) {
+
+	normal := strings.Replace(num, ",", ".", 1)
+	result, err := strconv.ParseFloat(normal, 64)
+	if err != nil {
+		return 0, err
+	}
+	return result, nil
+}
