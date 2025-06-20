@@ -21,8 +21,9 @@ func (s *Server) configureRoutes() {
 	s.router.GET("/convert", s.handleConversion)
 }
 
-func (s *Server) Run() {
-	s.router.Run(":8080")
+func (s *Server) Run() error {
+	err := s.router.Run(":8080")
+	return err
 }
 
 func (s *Server) handleConversion(c *gin.Context) {
