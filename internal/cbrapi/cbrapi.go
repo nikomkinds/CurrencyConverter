@@ -3,6 +3,7 @@ package cbrapi
 import (
 	"bytes"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"golang.org/x/net/html/charset"
 	"io"
@@ -31,8 +32,8 @@ func GetRates(dateReq string) (map[string]float64, error) {
 	URL := "http://www.cbr.ru/scripts/XML_daily.asp"
 	// add date if provided
 	if dateReq != "" {
-		if !isValidDate(dateReq) {
-			return nil, fmt.Errorf("invalid date format")
+		if err := isValidDate(dateReq); err != nil {
+			return nil, err
 		}
 		URL += "?date_req=" + dateReq
 	}
@@ -94,9 +95,21 @@ func GetRates(dateReq string) (map[string]float64, error) {
 	return rates, nil
 }
 
-func isValidDate(date string) bool {
+func isValidDate(date string) error {
+
 	re := regexp.MustCompile(`^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/([0-9]{4})$`)
-	return re.MatchString(date)
+	if !re.MatchString(date) {
+		return errors.New("invalid date format")
+	}
+
+	dateYearStr := date[6:]
+	dateYear, _ := strconv.Atoi(dateYearStr)
+	year := time.Now().Year()
+	if dateYear > year {
+		return errors.New("invalid year")
+	}
+
+	return nil
 }
 
 func parseRussianFloat(num string) (float64, error) {

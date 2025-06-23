@@ -45,6 +45,6 @@ func Convert(from, to, amountStr, dateReq string) (*ConversionResult, error) {
 		to,
 		amount,
 		converted,
-		fromRate / toRate,
+		toRate / fromRate,
 	}, nil
 }
